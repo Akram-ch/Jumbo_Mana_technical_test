@@ -6,6 +6,14 @@ from gym import spaces
 
 #The matrix class inherits the gym.Env class
 
+#The matrix class inherits the gym.Env class
+def manhattan_distance(square1, square2):
+    x1, y1 = square1
+    x2, y2 = square2
+    return abs(x1 - x2) + abs(y1 - y2)
+
+#The matrix class inherits the gym.Env class
+
 class MatrixEnv(gym.Env):
     def __init__(self):
         super(MatrixEnv, self).__init__()
@@ -30,11 +38,16 @@ class MatrixEnv(gym.Env):
         
         self.agent_position = (0, 0) #placeholder
         self.player_position = (0, 0) #placeholder
-        
+        self.max_moves = 200
+        self.total_reward = 0
+        self.visited = []
     
     
     def reset(self):
         #Randomly initialize the player's position
+        self.max_moves = 200
+        self.total_reward = 0
+        
         while True:
             random_position = tuple(np.random.randint(0, self.grid_size - 1, size=2))
             if random_position not in self.obstacles:
@@ -58,15 +71,16 @@ class MatrixEnv(gym.Env):
                 self.goal_state = goal
                 break
         
-                
-
             
         #return observation state
         return self.agent_position[0] * self.grid_size + self.agent_position[1]
 
-    
-    
+     
     def step(self, action):
+        
+        reward = 0.0
+        done = False
+            
         if action == 0:  # Move up
             new_position = (self.agent_position[0] - 1, self.agent_position[1])
         elif action == 1:  # Move down
@@ -76,21 +90,38 @@ class MatrixEnv(gym.Env):
         elif action == 3:  # Move right
             new_position = (self.agent_position[0], self.agent_position[1] + 1)
         
+        old_distance = manhattan_distance(self.agent_position, self.goal_state)
+        new_distance = manhattan_distance(new_position, self.goal_state)
+
         # Check if the new position is within the grid and not an obstacle
         if (0 <= new_position[0] < self.grid_size) and (0 <= new_position[1] < self.grid_size) and (new_position not in self.obstacles) and (new_position != self.player_position):
             self.agent_position = new_position
+            self.visited.append(new_position)
+            reward -= 0.04 
        
-        # Determine the reward and check if the agent is behind the player
-        
-        if (self.agent_position == self.goal_state):
-            reward = self.goal_reward
-            done = True
         else:
-            reward = self.default_reward
-            done = False
+            reward -= 0.75
+
+        if(self.agent_position==self.goal_state):
+            reward += 1.0
+            done = True
         
+        if(self.agent_position in set(self.visited)):
+            reward -= 0.25
+        
+        if(new_distance < old_distance):
+            reward += 0.5 + round(1/(new_distance + 1))
+        
+        else:
+            reward += -0.25
+        
+        self.total_reward += reward
+        
+        if(self.total_reward < (0.5 * (12**2))):
+            done = True
+            
         return self.agent_position[0] * self.grid_size + self.agent_position[1], reward, done, {}
-    
+
 
     def render(self, mode='human'):
         if mode == 'human':
@@ -116,3 +147,4 @@ class MatrixEnv(gym.Env):
 
         plt.imshow(grid)
         plt.show()
+
