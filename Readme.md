@@ -35,6 +35,7 @@ pip install stable-baselines3[extra]
 **OpenAI Gym** : provides an easy way to build environments for rl agents.
 
 #### Cartpole environment: 
+
 ```python
 environment_name = "CartPole-v0"
 env = gym.make(environment_name, render_mode="human")
@@ -65,11 +66,56 @@ in the beginning of each episode, the environment is reset to its default values
 
 
 
-
-
-
-
-
-
-## Step 2: Creating custom environment
+## Step 2: Creating a custom environment
 For this step I am creating the custom matrix environment in which my agent will operate.
+
+The environment for this problem is a 12x12 matrix with 4 main obstacles
+
+To create this environment, I have created a new class **MatrixEnv** which inherits from **gym.Env**
+
+I then implemented the __Init__(), **reset()**, **step()**, and **render()** functions for my new class
+
+**__init__()**:
+ * The **action space** is a Discrete space of size 4, meaning the agent can choose between 4 different moves : 0 for **up**, 1 for **down**, 2 for **left** and 3 for **right**
+
+ * The **observation space** is a Discrete space of 12x12 to represent the matrix
+
+* max_moves: the maximum number of moves the agent is allowed to make before the turn ends
+
+**reset()**:
+*   The player and agent are placed randomly on the grid
+*   The goal state is the position behind the player in relation to the agent.
+*   To avoid the agent being stuck with no way to bypass the player, the player cannot spawn on the edges of the map
+*   The player is also always placed in a position that guarantees that the goal position is not placed within an obstacle
+
+**step()**:
+* The agent chooses between 4 possible moves
+*  **Reward system**:
+   *  With every move, the reward is initialized at 0
+   *  With every move, the agent is given a small reward penalty of 0.04, this should theoretically discourage the agent from making too many unnecessary moves
+   *  If the agent attemps to move into an obstacle, outside the map, or into the players position, it is given a reward penalty of 0.75 and the move isn't taken into consideration.
+   *  If the agent moves into a position it has already been to before, it is given a penalty of 0.25
+   *  When the agent arrives at its goal state, it's given a reward of 1.0
+   *  The distance to the goal state is calculated before and after the move is made. The two moves are then compared:
+      *  If the agent moves closer to the target, the reward is inversly proportional to the new distance, means the closer it gets, the bigger the reward. This should theoritically encourage the agent to move closer and closer to the target.
+      I  
+      * If the agent moves away from the target, it is given a reward penalty of 0.25   
+    
+    *   To avoid being stuck in an infinite loop, I keep track of the total reward accumulated, if it reaches below a certain threshold (0.5 * (12**2)), we can assume the agent is "lost" and the game should be restarted.
+
+**render**: 
+
+## Step 3 : training a model
+In the limited time I had to finish this assignment, learning to develop and creating my own AI model from scratch has proven to be too complicated, so I decided to use an existing model from the stable baselines 3 library.
+
+I tried a few different models and the one that gave me the best result is stable_baselines3.PPO
+
+```python
+from stable_baselines3 import PPO
+model = PPO("MlpPolicy", env, verbose=1)  
+env.reset()
+model.learn(total_timesteps=40000)
+```
+## 4 - results
+While not perfect, the agent seems to almost always move in the general direction of the goal state, but starts to struggle when it gets close. This could be do to the model I used not being very adapted to the situation or some other factors I do not yet understand.
+With the limited time I have to complete this, I feel this is the best result I could achieve right now.
