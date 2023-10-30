@@ -109,12 +109,12 @@ class MatrixEnv(gym.Env):
         
         if(self.agent_position in set(self.visited)):
             reward -= 0.25
-        
+            
         if(new_distance < old_distance):
             reward += 0.5 + round(1/(new_distance + 1))
         
         else:
-            reward += -0.25
+            reward += -0.25 - round(1/(new_distance + 1))
         
         self.total_reward += reward
         

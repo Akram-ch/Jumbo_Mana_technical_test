@@ -2,7 +2,25 @@
 
 This document details all the steps that I took to attemp to solve the Jumbo Mana technical recruitement test.
 
-## Step 1 : Training
+## Step 0 : Running
+Versions:
+
+* Python 3.11.3
+* Cuda 11.8
+
+To run this program, execute the following commands in a **miniconda** terminal:
+ 
+``` 
+conda env create -f conda_env.yml
+conda activate conda_env
+python main.py
+```
+A window will pop up showing you the view of the matrix. Close the window to see the next step for a total of 20 steps.
+
+you can adjust the number of steps in the main.py file.
+
+
+## Step 1 : Learning
 The test requires the use and manipulation of reinforcement learning techniques, which I am not yet familiar with. So I started by watching a YouTube tutorial and creating a small test project to get started.
 
 **video link** : https://www.youtube.com/watch?v=Mut_u40Sqz4&t=895s

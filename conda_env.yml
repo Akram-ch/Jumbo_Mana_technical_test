@@ -1,4 +1,4 @@
-name: akram
+name: conda_env
 channels:
   - defaults
 dependencies:

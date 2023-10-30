@@ -13,5 +13,5 @@ env.render('human', "Initial state")
 for _ in range(20):  # Adjust the number of steps for testing
     action, _ = model.predict(obs)
     obs, _, done, _ = env.step(action)
+    env.render('human')
       # Optional: visualize the agent's actions
-env.render('human', "After 20 moves")
