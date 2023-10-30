@@ -1,6 +1,7 @@
 import gym
 import numpy as np
 from gym import spaces
+import matplotlib.pyplot as plt
 
 #The matrix class inherits the gym.Env class
 
@@ -123,13 +124,17 @@ class MatrixEnv(gym.Env):
         return self.agent_position[0] * self.grid_size + self.agent_position[1], reward, done, {}
 
 
-    def render(self, mode='human'):
+    def render(self, mode='human', label=""):
         if mode == 'human':
-            self._render_human()
+            self._render_human(label)
         else:
             super(MatrixEnv, self).render(mode=mode)
 
-    def _render_human(self):
+    def _render_human(self, label=""):
+        
+        fig = plt.figure()
+        fig.canvas.manager.set_window_title(label)
+        
         grid = np.ones((self.grid_size, self.grid_size), dtype=int)
 
         # Set obstacle cells to black
@@ -144,6 +149,7 @@ class MatrixEnv(gym.Env):
 
         # Set goal cell to green
         grid[self.goal_state[0], self.goal_state[1]] = 3
+
 
         plt.imshow(grid)
         plt.show()

@@ -80,8 +80,6 @@ I then implemented the __Init__(), **reset()**, **step()**, and **render()** fun
 
  * The **observation space** is a Discrete space of 12x12 to represent the matrix
 
-* max_moves: the maximum number of moves the agent is allowed to make before the turn ends
-
 **reset()**:
 *   The player and agent are placed randomly on the grid
 *   The goal state is the position behind the player in relation to the agent.
@@ -104,6 +102,13 @@ I then implemented the __Init__(), **reset()**, **step()**, and **render()** fun
     *   To avoid being stuck in an infinite loop, I keep track of the total reward accumulated, if it reaches below a certain threshold (0.5 * (12**2)), we can assume the agent is "lost" and the game should be restarted.
 
 **render**: 
+The matrix is displayed as shown here
+
+![Alt text](Screenshot%202023-10-30%20162943.png)
+
+*The player is displayed in **Yellow**
+* The agent is displayed in **Blue**
+* The target is displayed in **Green**
 
 ## Step 3 : training a model
 In the limited time I had to finish this assignment, learning to develop and creating my own AI model from scratch has proven to be too complicated, so I decided to use an existing model from the stable baselines 3 library.
